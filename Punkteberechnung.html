@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Punkteverteilung - Realschule Lage</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --grey-color: #6c757d;
+            --soft-green-color: #28a745;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --primary-light: #0056b3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb .breadcrumb-active {
+            color: var(--grey-color);
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: var(--transition);
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--dark-color);
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            min-height: 42px;
+        }
+
+        .input-group input:focus {
+            color: var(--dark-color);
+            background-color: #fff;
+            border-color: var(--primary-light);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .button-group .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .input-section,
+        .result-section {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .input-section h3,
+        .result-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+        }
+
+        .grade-thresholds-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .grade-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+        }
+
+        .result-table th,
+        .result-table td {
+            border: 1px solid #e9ecef;
+            padding: 10px 12px;
+            text-align: center;
+        }
+
+        .result-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .result-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .result-table tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .templates-section {
+            margin-bottom: 15px;
+            padding: 12px 0;
+        }
+
+        .templates-section h2 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+
+        .template-btn-container {
+            display: inline-flex;
+            align-items: center;
+            margin: 4px;
+        }
+
+        .template-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: #fff;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            margin-right: 5px;
+            min-height: 38px;
+        }
+
+        .template-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .template-delete-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 38px;
+            min-height: 38px;
+            font-size: 1rem;
+            background-color: var(--danger-color);
+            color: white;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .template-delete-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .header-points-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-points-input {
+            width: 100px;
+            min-width: 100px;
+        }
+
+        .input-button-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-button-row .form-control {
+            flex: 1;
+        }
+
+        .input-button-row .btn {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .collapsible-header:hover {
+            background-color: #f8f9fa;
+        }
+
+        .collapse-icon {
+            transition: var(--transition);
+        }
+
+        .collapse-icon i {
+            font-size: 1.2rem;
+        }
+
+        .collapse-content {
+            display: none;
+            padding: 15px 0;
+            border-top: 1px solid #e9ecef;
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                padding: 10px;
+            }
+
+            .grade-thresholds-container {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group .btn {
+                width: 100%;
+            }
+
+            .header-points-container {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .header-points-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Pfadnavigation -->
+        <div class="breadcrumb">
+            <span class="breadcrumb-active">Punkteverteilung</span>
+        </div>
+
+        <!-- Punkte Modul -->
+        <div id="punkte-module" class="module">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Punkteverteilung</h2>
+                    <div class="header-points-container">
+                        <input type="number" id="headerTotalPoints" min="1" value="100" class="form-control header-points-input" onchange="syncTotalPoints('header')" onkeydown="if(event.key === 'Enter') calculate()">
+                        <button class="btn btn-secondary" onclick="exportTableAsJPG()">Als JPG exportieren</button>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h3>Punkteverteilungstabelle</h3>
+                    <div id="resultTable"></div>
+                </div>
+            </div>
+
+            <!-- Bereich 2: Berechnung der Punkteverteilung (ausklappbar) -->
+            <div class="card">
+                <div class="card-header collapsible-header" onclick="toggleCalculationPanel()">
+                    <h2>Berechnung der Punkteverteilung</h2>
+                    <div class="collapse-icon">
+                        <i id="calculation-toggle-icon" class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <div id="calculation-content" class="collapse-content" style="display: none;">
+                    <div class="main-container">
+                        <!-- Preset-Auswahl -->
+                        <div class="input-section">
+                            <h3>Voreinstellungen</h3>
+                            <div class="button-group">
+                                <button
+                                    id="btnStandard"
+                                    class="btn btn-primary"
+                                    onclick="selectPreset('standard')">
+                                    Standard
+                                </button>
+                                <button
+                                    id="btnCustom"
+                                    class="btn btn-secondary"
+                                    onclick="selectPreset('custom')">
+                                    Benutzerdefiniert
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Notengrenzen-Eingabe -->
+                        <div class="input-section">
+                            <h3>Prozentränge für Notengrenzen</h3>
+                            <div id="gradeThresholdInputs">
+                                <!-- Grade threshold inputs will be dynamically generated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert für bessere Dialoge -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // ===== KONFIGURATION =====
+        const PUNKTE_CONFIG = {
+            GRADES_COUNT: 6,
+            STANDARD_THRESHOLDS: [92, 80, 65, 50, 20, 0],
+            LAST_POINTS_KEY: 'lastTotalPoints'
+        };
+
+        // ===== HILFSFUNKTIONEN =====
+        function safeGetElement(id) {
+            return document.getElementById(id);
+        }
+
+        // ===== PUNKTEVERTEILUNG MODUL =====
+
+        // Punkteverteilung Module rendering
+        function renderPunkteverteilungModule() {
+            // Initialize grade threshold inputs if not already done
+            initializeGradeThresholdInputs();
+
+            // Load last points from storage
+            loadLastPoints();
+
+            // Select standard preset
+            selectPreset('standard');
+
+            // Calculate initial point distribution
+            calculate();
+
+            // Keep buttons in consistent design
+            updatePunkteverteilungButtons();
+        }
+
+        // Update Punkteverteilung Buttons
+        function updatePunkteverteilungButtons() {
+            // Standard/Custom Buttons with general classes
+            const btnStandard = safeGetElement('btnStandard');
+            const btnCustom = safeGetElement('btnCustom');
+
+            if (btnStandard && btnCustom) {
+                // Remove current classes
+                const removeClassList = ['active', 'btn-primary', 'btn-secondary'];
+                removeClassList.forEach(className => {
+                    btnStandard.classList.remove(className);
+                    btnCustom.classList.remove(className);
+                });
+
+                // Add appropriate classes
+                btnStandard.classList.add('btn');
+                btnCustom.classList.add('btn');
+
+                // Determine active class and adjust styling
+                if (btnStandard.textContent.trim() === 'Standard') {
+                    btnStandard.classList.add('btn-primary');
+                    btnCustom.classList.add('btn-secondary');
+                } else {
+                    btnStandard.classList.add('btn-secondary');
+                    btnCustom.classList.add('btn-primary');
+                }
+            }
+
+            // Calculate and Save buttons
+            const calculateButton = document.querySelector('#punkte-module button[onclick="calculate()"]');
+            const saveTemplateButton = document.querySelector('#punkte-module button[onclick="saveTemplate()"]');
+
+            if (calculateButton) {
+                calculateButton.className = 'btn btn-primary';
+            }
+
+            if (saveTemplateButton) {
+                saveTemplateButton.className = 'btn btn-secondary';
+            }
+        }
+
+        // Generate grade threshold inputs
+        function initializeGradeThresholdInputs() {
+            const container = safeGetElement('gradeThresholdInputs');
+            if (!container) return;
+
+            container.innerHTML = ''; // Clear container
+
+            // Create main container for two columns
+            const thresholdsContainer = document.createElement('div');
+            thresholdsContainer.classList.add('grade-thresholds-container');
+
+            // Create left column (grades 1-3)
+            const leftColumn = document.createElement('div');
+            leftColumn.classList.add('grade-column');
+
+            // Create right column (grades 4-6)
+            const rightColumn = document.createElement('div');
+            rightColumn.classList.add('grade-column');
+
+            for (let i = 1; i <= PUNKTE_CONFIG.GRADES_COUNT; i++) {
+                const div = document.createElement('div');
+                div.classList.add('input-group');
+
+                const label = document.createElement('label');
+                label.htmlFor = `gradeThreshold${i}`;
+                label.textContent = `Note ${i} ab (%):`;
+
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.id = `gradeThreshold${i}`;
+                input.min = '0';
+                input.max = '100';
+                input.step = '0.1';
+                input.className = 'form-control';
+                input.onchange = calculate;
+
+                div.appendChild(label);
+                div.appendChild(input);
+
+                // Add to left column if grade 1-3, otherwise to right column
+                if (i <= 3) {
+                    leftColumn.appendChild(div);
+                } else {
+                    rightColumn.appendChild(div);
+                }
+            }
+
+            // Add columns to container
+            thresholdsContainer.appendChild(leftColumn);
+            thresholdsContainer.appendChild(rightColumn);
+            container.appendChild(thresholdsContainer);
+        }
+
+        // Select preset
+        function selectPreset(type) {
+            const standardBtn = safeGetElement('btnStandard');
+            const customBtn = safeGetElement('btnCustom');
+
+            if (!standardBtn || !customBtn) return;
+
+            if (type === 'standard') {
+                standardBtn.classList.add('active');
+                customBtn.classList.remove('active');
+
+                // Load standard values
+                for (let i = 0; i < PUNKTE_CONFIG.STANDARD_THRESHOLDS.length; i++) {
+                    const input = safeGetElement(`gradeThreshold${i + 1}`);
+                    if (input) {
+                        input.value = PUNKTE_CONFIG.STANDARD_THRESHOLDS[i];
+                        input.disabled = true; // Disable inputs for standard
+                    }
+                }
+            } else {
+                standardBtn.classList.remove('active');
+                customBtn.classList.add('active');
+
+                // Set all values to 0 and enable inputs
+                for (let i = 1; i <= PUNKTE_CONFIG.GRADES_COUNT; i++) {
+                    const input = safeGetElement(`gradeThreshold${i}`);
+                    if (input) {
+                        input.value = 0;
+                        input.disabled = false; // Enable inputs for custom
+                    }
+                }
+            }
+
+            calculate();
+
+            // Update UI elements
+            updatePunkteverteilungButtons();
+        }
+
+        // Sync total points between header and detail view
+        function syncTotalPoints(source) {
+            const headerInput = safeGetElement('headerTotalPoints');
+
+            if (!headerInput) return;
+
+            // Save the points to local storage
+            saveLastPoints(headerInput.value);
+
+            // Recalculate after updating
+            calculate();
+        }
+
+        // Save last total points to Local Storage
+        function saveLastPoints(points) {
+            try {
+                localStorage.setItem(PUNKTE_CONFIG.LAST_POINTS_KEY, points.toString());
+            } catch (error) {
+                console.error("Fehler beim Speichern der letzten Punktzahl:", error);
+            }
+        }
+
+        // Load last total points from Local Storage
+        function loadLastPoints() {
+            try {
+                const lastPoints = localStorage.getItem(PUNKTE_CONFIG.LAST_POINTS_KEY);
+                if (lastPoints) {
+                    const headerTotalPointsInput = safeGetElement('headerTotalPoints');
+                    if (headerTotalPointsInput) {
+                        headerTotalPointsInput.value = lastPoints;
+                    }
+                }
+            } catch (error) {
+                console.error("Fehler beim Laden der letzten Punktzahl:", error);
+            }
+        }
+
+        // Perform calculation
+        function calculate() {
+            const headerTotalPointsInput = safeGetElement('headerTotalPoints');
+            if (!headerTotalPointsInput) return;
+
+            const totalPoints = parseInt(headerTotalPointsInput.value);
+
+            if (isNaN(totalPoints) || totalPoints <= 0) {
+                swal("Fehler", "Bitte geben Sie eine gültige Gesamtpunktzahl ein.", "error");
+                return;
+            }
+
+            // Save the points to local storage
+            saveLastPoints(totalPoints);
+
+            // Collect and validate thresholds
+            const thresholds = [];
+            for (let i = 1; i <= PUNKTE_CONFIG.GRADES_COUNT; i++) {
+                const thresholdInput = safeGetElement(`gradeThreshold${i}`);
+                if (!thresholdInput) continue;
+
+                const threshold = parseFloat(thresholdInput.value);
+
+                if (isNaN(threshold)) {
+                    swal("Fehler", `Bitte geben Sie einen gültigen Wert für Note ${i} ein.`, "error");
+                    return;
+                }
+
+                thresholds.push(threshold / 100);
+            }
+
+            // Calculate point thresholds
+            const pointThresholds = thresholds.map(t => Math.ceil(t * totalPoints));
+
+            // Generate result table
+            const resultTable = safeGetElement('resultTable');
+            if (resultTable) {
+                resultTable.innerHTML = `
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>Note</th>
+                                <th>Punkte von</th>
+                                <th>Punkte bis</th>
+                                <th>Prozent von</th>
+                                <th>Prozent bis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${generateTableRows(pointThresholds, totalPoints)}
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+
+        // Generate table rows
+        function generateTableRows(pointThresholds, totalPoints) {
+            let rows = '';
+
+            for (let grade = 1; grade <= PUNKTE_CONFIG.GRADES_COUNT; grade++) {
+                if (!pointThresholds[grade - 1] && pointThresholds[grade - 1] !== 0) continue;
+
+                const pointFrom = pointThresholds[grade - 1];
+                const pointTo = grade === 1 ? totalPoints : (pointThresholds[grade - 2] ? pointThresholds[grade - 2] - 1 : totalPoints);
+
+                if (pointFrom === undefined || pointTo === undefined) continue;
+
+                const percentFrom = ((pointFrom / totalPoints) * 100).toFixed(1);
+                const percentTo = ((pointTo / totalPoints) * 100).toFixed(1);
+
+                rows += `
+                    <tr>
+                        <td>${grade}</td>
+                        <td>${pointFrom}</td>
+                        <td>${pointTo}</td>
+                        <td>${percentFrom}%</td>
+                        <td>${percentTo}%</td>
+                    </tr>
+                `;
+            }
+
+            return rows;
+        }
+
+        // Toggle calculation panel
+        function toggleCalculationPanel() {
+            const content = safeGetElement('calculation-content');
+            const toggleIcon = safeGetElement('calculation-toggle-icon');
+
+            if (!content || !toggleIcon) return;
+
+            // Toggle status
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggleIcon.classList.add('fa-chevron-up');
+                toggleIcon.classList.remove('fa-chevron-down');
+            } else {
+                content.style.display = 'none';
+                toggleIcon.classList.add('fa-chevron-down');
+                toggleIcon.classList.remove('fa-chevron-up');
+            }
+        }
+
+        // Export table as JPG
+        function exportTableAsJPG() {
+            const resultTable = safeGetElement('resultTable');
+            if (!resultTable) {
+                swal("Fehler", "Keine Tabelle zum Exportieren gefunden.", "error");
+                return;
+            }
+
+            // Mapping for grade names
+            const gradeNames = {
+                1: 'sehr gut',
+                2: 'gut',
+                3: 'befriedigend',
+                4: 'ausreichend',
+                5: 'mangelhaft',
+                6: 'ungenügend'
+            };
+
+            // Create a temporary container for the export
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.left = '-9999px';
+            tempContainer.style.top = '-9999px';
+            tempContainer.style.backgroundColor = 'white';
+            tempContainer.style.padding = '20px';
+            document.body.appendChild(tempContainer);
+
+            // Create a new table with only the first three columns
+            const newTable = document.createElement('table');
+            newTable.className = 'result-table';
+            newTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Note</th>
+                        <th>Punkte von</th>
+                        <th>Punkte bis</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            // Get the tbody from the original table
+            const originalTbody = resultTable.querySelector('tbody');
+            if (originalTbody) {
+                const rows = originalTbody.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 3) {
+                        const gradeNumber = parseInt(cells[0].textContent);
+                        const gradeName = gradeNames[gradeNumber] || cells[0].textContent;
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                            <td>${gradeName}</td>
+                            <td>${cells[1].textContent}</td>
+                            <td>${cells[2].textContent}</td>
+                        `;
+                        newTable.querySelector('tbody').appendChild(newRow);
+                    }
+                });
+            }
+
+            tempContainer.appendChild(newTable);
+
+            // Use html2canvas to capture the table
+            html2canvas(newTable, {
+                backgroundColor: '#ffffff',
+                scale: 2 // Higher resolution
+            }).then(canvas => {
+                // Create download link
+                const link = document.createElement('a');
+                link.download = 'Punkteverteilung.jpg';
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+
+                // Remove temporary container
+                document.body.removeChild(tempContainer);
+            }).catch(error => {
+                console.error('Fehler beim Exportieren:', error);
+                document.body.removeChild(tempContainer);
+                swal("Fehler", "Fehler beim Exportieren der Tabelle.", "error");
+            });
+        }
+
+        // Event Listener
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initiales Rendern
+            renderPunkteverteilungModule();
+        });
+    </script>
+</body>
+</html>
